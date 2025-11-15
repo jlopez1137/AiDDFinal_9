@@ -32,7 +32,7 @@
             </div>
             <div class="w-100 w-md-50">
               <form class="mb-2" method="post" action="{{ url_for('bookings.approve', booking_id=item.booking.booking_id) }}">
-                {{ csrf_token() }}
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="mb-2">
                   <label for="approve-note-{{ item.booking.booking_id }}" class="form-label small text-muted">Approval notes (optional)</label>
                   <textarea id="approve-note-{{ item.booking.booking_id }}" name="approval_notes" class="form-control form-control-sm" rows="2"></textarea>
@@ -40,7 +40,7 @@
                 <button class="btn btn-sm btn-success" type="submit">Approve</button>
               </form>
               <form method="post" action="{{ url_for('bookings.reject', booking_id=item.booking.booking_id) }}">
-                {{ csrf_token() }}
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="mb-2">
                   <label for="reject-note-{{ item.booking.booking_id }}" class="form-label small text-muted">Rejection notes (optional)</label>
                   <textarea id="reject-note-{{ item.booking.booking_id }}" name="approval_notes" class="form-control form-control-sm" rows="2"></textarea>

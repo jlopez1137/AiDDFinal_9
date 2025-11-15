@@ -9,7 +9,7 @@ from typing import Any, Dict
 from flask import Flask, render_template
 from flask_login import LoginManager, current_user
 from flask_wtf import CSRFProtect
-from flask_wtf.csrf import generate_csrf
+from flask_wtf.csrf import CSRFError, generate_csrf
 
 from .config import BaseConfig, get_config
 from .data_access import resources_dao, users_dao
@@ -102,6 +102,18 @@ def register_blueprints(app: Flask) -> None:
 
 def register_error_handlers(app: Flask) -> None:
     """Register user-friendly error handlers."""
+
+    @app.errorhandler(CSRFError)
+    def handle_csrf_error(error: CSRFError) -> tuple[str, int]:
+        """Handle CSRF token validation errors."""
+        return (
+            render_template(
+                "error.html",
+                title="Security Error",
+                message="The security token has expired or is invalid. Please refresh the page and try again.",
+            ),
+            400,
+        )
 
     @app.errorhandler(404)
     def not_found(error: Exception) -> tuple[str, int]:

@@ -50,7 +50,7 @@
               <td class="text-end">
                 {% if booking.status in ['pending', 'approved'] %}
                   <form method="post" action="{{ url_for('bookings.cancel', booking_id=booking.booking_id) }}" class="d-inline">
-                    {{ csrf_token() }}
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
                   </form>
                 {% else %}
