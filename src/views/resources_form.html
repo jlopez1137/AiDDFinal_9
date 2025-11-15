@@ -1,0 +1,83 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h1 class="h4 mb-3">{{ resource and "Edit resource" or "Create resource" }}</h1>
+          <form method="post" enctype="multipart/form-data" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+              <label for="{{ form.title.id }}" class="form-label">Title</label>
+              {{ form.title(class="form-control") }}
+              {% for error in form.title.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+            <div class="mb-3">
+              <label for="{{ form.description.id }}" class="form-label">Description</label>
+              {{ form.description(class="form-control", rows="4") }}
+              {% for error in form.description.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="{{ form.category.id }}" class="form-label">Category</label>
+                {{ form.category(class="form-select") }}
+              </div>
+              <div class="col-md-6">
+                <label for="{{ form.location.id }}" class="form-label">Location</label>
+                {{ form.location(class="form-control") }}
+                {% for error in form.location.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+              <div class="col-md-4">
+                <label for="{{ form.capacity.id }}" class="form-label">Capacity</label>
+                {{ form.capacity(class="form-control") }}
+                {% for error in form.capacity.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+              </div>
+              <div class="col-md-4">
+                <label for="{{ form.status.id }}" class="form-label">Status</label>
+                {{ form.status(class="form-select") }}
+              </div>
+              <div class="col-md-4 d-flex align-items-end">
+                <div class="form-check">
+                  {{ form.requires_approval(class="form-check-input", id=form.requires_approval.id) }}
+                  <label class="form-check-label" for="{{ form.requires_approval.id }}">
+                    Requires approval
+                  </label>
+                  <div class="form-text">Bookings stay pending until approved.</div>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3 mt-3">
+              <label for="{{ form.image.id }}" class="form-label">Primary image</label>
+              {{ form.image(class="form-control") }}
+              <div class="form-text">PNG or JPG up to 2 MB.</div>
+              {% for error in form.image.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+            <div class="mb-3 mt-3">
+              <label for="{{ form.availability_rules.id }}" class="form-label">Availability rules</label>
+              {{ form.availability_rules(class="form-control", rows="3") }}
+              {% for error in form.availability_rules.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <a class="btn btn-outline-secondary" href="{{ url_for('resources.list_resources') }}">Cancel</a>
+              {{ form.submit(class="btn btn-primary") }}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Equipment placeholder</title>
+  <desc id="desc">Stylized illustration of campus equipment.</desc>
+  <rect width="640" height="360" rx="24" fill="#f4f8f0" />
+  <g fill="none" stroke="#8ab27b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="140" y="110" width="360" height="180" rx="20" fill="#d6ead0" />
+    <rect x="200" y="150" width="120" height="90" rx="12" fill="#ffffff" />
+    <rect x="340" y="150" width="80" height="90" rx="12" fill="#ffffff" />
+    <path d="M200 210h220" />
+    <path d="M270 240h120" />
+  </g>
+  <circle cx="488" cy="120" r="24" fill="#8ab27b" opacity="0.3" />
+</svg>
+

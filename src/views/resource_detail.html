@@ -1,0 +1,145 @@
+{% extends 'layouts/base.html' %}
+{% import 'partials/resource_macros.html' as resource_macros %}
+
+{% block content %}
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <article class="card shadow-sm">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div>
+              <h1 class="h3 mb-1">{{ resource.title }}</h1>
+              <p class="text-muted mb-0">{{ resource.location }}</p>
+            </div>
+            <div class="d-flex flex-column align-items-end gap-2">
+              <span class="badge bg-primary-subtle text-primary">{{ resource.category }}</span>
+              {% if resource.requires_approval %}
+                <span class="badge bg-warning-subtle text-warning-emphasis">Requires Approval</span>
+              {% endif %}
+            </div>
+          </div>
+          <p class="lead">{{ resource.description }}</p>
+          <dl class="row">
+            <dt class="col-sm-4">Capacity</dt>
+            <dd class="col-sm-8">{{ resource.capacity }}</dd>
+            <dt class="col-sm-4">Availability</dt>
+            <dd class="col-sm-8">{{ resource.availability_rules or "See schedule with staff" }}</dd>
+            <dt class="col-sm-4">Status</dt>
+            <dd class="col-sm-8 text-capitalize">{{ resource.status }}</dd>
+          </dl>
+
+          <img
+            src="{{ resource_macros.resource_image(resource) }}"
+            alt="{{ resource.title }}"
+            class="img-fluid rounded shadow-sm my-3"
+          />
+
+          {% include 'reviews_section.html' %}
+        </div>
+      </article>
+    </div>
+    <div class="col-lg-4">
+      <aside class="d-flex flex-column gap-4">
+        <section class="card shadow-sm">
+          <div class="card-body">
+            <h2 class="h5">Request a booking</h2>
+            {% if current_user.is_authenticated %}
+              {% if resource.requires_approval %}
+                <p class="badge bg-warning-subtle text-warning-emphasis mb-3">Approval required before confirmation</p>
+              {% endif %}
+              <form
+                method="post"
+                action="{{ url_for('bookings.create', resource_id=resource.resource_id) }}"
+                novalidate
+              >
+                {{ booking_form.hidden_tag() }}
+                <div class="mb-3">
+                  <label for="{{ booking_form.start_datetime.id }}" class="form-label">Start</label>
+                  {{ booking_form.start_datetime(class="form-control") }}
+                  {% for error in booking_form.start_datetime.errors %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                  {% endfor %}
+                </div>
+                <div class="mb-3">
+                  <label for="{{ booking_form.end_datetime.id }}" class="form-label">End</label>
+                  {{ booking_form.end_datetime(class="form-control") }}
+                  {% for error in booking_form.end_datetime.errors %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                  {% endfor %}
+                </div>
+                {{ booking_form.submit(class="btn btn-primary w-100") }}
+              </form>
+            {% else %}
+              <p class="text-muted">
+                Please <a href="{{ url_for('auth.login') }}">sign in</a> to request a booking for this resource.
+              </p>
+            {% endif %}
+          </div>
+        </section>
+
+        {% if current_user.is_authenticated and current_user.user_id != resource.owner_id %}
+          <section class="card shadow-sm">
+            <div class="card-body">
+              <h2 class="h5">Contact resource owner</h2>
+              <form method="post" action="{{ url_for('messaging.start') }}" novalidate>
+                {{ thread_form.hidden_tag() }}
+                <div class="mb-3">
+                  <label class="form-label" for="messageContent">Message</label>
+                  {{ thread_form.content(class="form-control", rows="3") }}
+                  {% for error in thread_form.content.errors %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                  {% endfor %}
+                </div>
+                {{ thread_form.submit(class="btn btn-outline-primary w-100") }}
+              </form>
+            </div>
+          </section>
+        {% endif %}
+
+        {% if current_user.is_authenticated and (current_user.user_id == resource.owner_id or current_user.is_admin) %}
+          <section class="card shadow-sm">
+            <div class="card-body">
+              <h2 class="h5">Upcoming bookings</h2>
+              <ul class="list-group list-group-flush">
+                {% for booking in bookings %}
+                  <li class="list-group-item">
+                    <p class="mb-1 fw-semibold">{{ booking.start_datetime.strftime('%b %d, %Y %I:%M %p') }} → {{ booking.end_datetime.strftime('%I:%M %p') }}</p>
+                    <p class="mb-1">
+                      <span class="badge text-capitalize {% if booking.status == 'pending' %}bg-warning-subtle text-warning-emphasis{% elif booking.status == 'approved' %}bg-success-subtle text-success{% elif booking.status == 'rejected' %}bg-danger-subtle text-danger{% else %}bg-secondary-subtle text-secondary{% endif %}">
+                        {{ booking.status }}
+                      </span>
+                    </p>
+                    {% if booking.approval_notes %}
+                      <p class="mb-1 text-muted small">Notes: {{ booking.approval_notes }}</p>
+                    {% endif %}
+                    {% if booking.status == 'pending' %}
+                      <form class="mt-2" method="post" action="{{ url_for('bookings.approve', booking_id=booking.booking_id) }}">
+                        {{ csrf_token() }}
+                        <div class="mb-2">
+                          <label for="approve-notes-{{ booking.booking_id }}" class="form-label small text-muted">Approval notes (optional)</label>
+                          <textarea id="approve-notes-{{ booking.booking_id }}" name="approval_notes" class="form-control form-control-sm" rows="2" placeholder="Share pickup details, etc."></textarea>
+                        </div>
+                        <button class="btn btn-sm btn-success" type="submit">Approve</button>
+                      </form>
+                      <form class="mt-2" method="post" action="{{ url_for('bookings.reject', booking_id=booking.booking_id) }}">
+                        {{ csrf_token() }}
+                        <div class="mb-2">
+                          <label for="reject-notes-{{ booking.booking_id }}" class="form-label small text-muted">Rejection notes (optional)</label>
+                          <textarea id="reject-notes-{{ booking.booking_id }}" name="approval_notes" class="form-control form-control-sm" rows="2" placeholder="Share why this booking cannot proceed."></textarea>
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger" type="submit">Reject</button>
+                      </form>
+                    {% endif %}
+                  </li>
+                {% else %}
+                  <li class="list-group-item text-muted">No bookings yet.</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </section>
+        {% endif %}
+      </aside>
+    </div>
+  </div>
+{% endblock %}
+

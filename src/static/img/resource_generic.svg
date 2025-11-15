@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Generic resource placeholder</title>
+  <desc id="desc">Abstract illustration representing a campus resource.</desc>
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d7e3fc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f1f5ff;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#grad)" rx="24" />
+  <g fill="none" stroke="#6b7baf" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M128 264h384" />
+    <path d="M192 120l128 96 128-160" />
+    <circle cx="188" cy="118" r="24" fill="#6b7baf" opacity="0.35" />
+    <circle cx="448" cy="58" r="18" fill="#6b7baf" opacity="0.25" />
+  </g>
+</svg>
+

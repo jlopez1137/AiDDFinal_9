@@ -1,0 +1,10 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+  <div class="text-center py-5">
+    <h1 class="display-6 mb-3">{{ title or "Something went wrong" }}</h1>
+    <p class="lead text-muted">{{ message or "Please return to the home page and try again." }}</p>
+    <a class="btn btn-primary mt-3" href="{{ url_for('index') }}">Go home</a>
+  </div>
+{% endblock %}
+

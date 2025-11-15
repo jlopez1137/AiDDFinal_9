@@ -1,0 +1,201 @@
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+}
+
+.border-dashed {
+  border: 2px dashed rgba(0, 0, 0, 0.1);
+}
+
+.message-thread {
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.navbar-brand {
+  letter-spacing: 0.02em;
+}
+
+.card-img-top {
+  object-fit: cover;
+  height: 180px;
+}
+
+.message-thread::-webkit-scrollbar {
+  width: 0.5rem;
+}
+
+.message-thread::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 999px;
+}
+
+.form-check-input:focus,
+.form-control:focus,
+.form-select:focus,
+textarea:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+  border-color: rgba(13, 110, 253, 0.45);
+}
+
+/* Modern Home Page Styles */
+.hero-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 1rem;
+  padding: 3rem 0;
+}
+
+.hero-image-wrapper {
+  position: relative;
+  padding: 1rem;
+}
+
+.hero-image-wrapper img {
+  max-height: 400px;
+  width: 100%;
+  object-fit: contain;
+}
+
+.category-badge {
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.category-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--bs-primary) !important;
+  color: white !important;
+}
+
+.resource-card {
+  transition: all 0.3s ease;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.resource-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-image-wrapper {
+  overflow: hidden;
+  height: 200px;
+  background: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%);
+}
+
+.card-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.resource-card:hover .card-image-wrapper img {
+  transform: scale(1.05);
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 2rem 0;
+  }
+
+  .hero-section h1 {
+    font-size: 2rem;
+  }
+
+  .hero-image-wrapper {
+    margin-bottom: 2rem;
+  }
+
+  .hero-image-wrapper img {
+    max-height: 250px;
+  }
+
+  .navbar-nav {
+    padding-top: 1rem;
+  }
+
+  .navbar-nav .nav-item {
+    margin-bottom: 0.5rem;
+  }
+
+  .navbar-nav .btn {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .navbar-text {
+    display: block;
+    padding: 0.5rem 0;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .categories-section,
+  .featured-resources-section {
+    margin-bottom: 3rem;
+  }
+
+  .resource-card {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-section h1 {
+    font-size: 1.75rem;
+  }
+
+  .hero-section .lead {
+    font-size: 1rem;
+  }
+
+  .category-badge {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .card-body {
+    padding: 1.5rem !important;
+  }
+}
+
+/* Navbar Mobile Fixes */
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+.navbar-collapse {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+@media (min-width: 992px) {
+  .navbar-collapse {
+    border-top: none;
+    margin-top: 0;
+    padding-top: 0;
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Better button styles */
+.btn {
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Bootstrap Icons are loaded via CDN in base.html */
+

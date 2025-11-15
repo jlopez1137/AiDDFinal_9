@@ -1,0 +1,16 @@
+{% if pagination %}
+  <nav aria-label="Pagination">
+    <ul class="pagination justify-content-center">
+      <li class="page-item {% if not pagination.prev_url %}disabled{% endif %}">
+        <a class="page-link" href="{{ pagination.prev_url or '#' }}" aria-label="Previous">Previous</a>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link">Page {{ pagination.page }} of {{ pagination.pages }}</span>
+      </li>
+      <li class="page-item {% if not pagination.next_url %}disabled{% endif %}">
+        <a class="page-link" href="{{ pagination.next_url or '#' }}" aria-label="Next">Next</a>
+      </li>
+    </ul>
+  </nav>
+{% endif %}
+

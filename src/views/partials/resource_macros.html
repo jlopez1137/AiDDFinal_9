@@ -1,0 +1,18 @@
+{% macro resource_image(resource) %}
+  {% if resource.images %}
+    {{ url_for('static', filename='uploads/' ~ resource.images) }}
+  {% else %}
+    {% set category = (resource.category or '')|lower %}
+    {% set filename = 'img/resource_generic.svg' %}
+    {% if 'room' in category or 'study' in category %}
+      {% set filename = 'img/room.svg' %}
+    {% elif 'equipment' in category %}
+      {% set filename = 'img/equipment.svg' %}
+    {% elif 'wellness' in category %}
+      {% set filename = 'img/wellness.svg' %}
+    {% endif %}
+    {{ url_for('static', filename=filename) }}
+  {% endif %}
+{% endmacro %}
+
+

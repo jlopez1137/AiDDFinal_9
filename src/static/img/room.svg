@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Room placeholder</title>
+  <desc id="desc">Stylized illustration of a meeting room.</desc>
+  <rect width="640" height="360" rx="24" fill="#f5f9ff" />
+  <path d="M96 288h448" stroke="#b0c4ff" stroke-width="6" stroke-linecap="round" />
+  <rect x="160" y="120" width="320" height="128" rx="18" fill="#d9e5ff" />
+  <rect x="220" y="160" width="80" height="88" rx="12" fill="#ffffff" stroke="#91a4e8" stroke-width="4" />
+  <rect x="340" y="160" width="80" height="88" rx="12" fill="#ffffff" stroke="#91a4e8" stroke-width="4" />
+  <path d="M136 120h368" stroke="#91a4e8" stroke-width="6" stroke-linecap="round" />
+  <circle cx="320" cy="96" r="28" fill="#91a4e8" opacity="0.35" />
+</svg>
+

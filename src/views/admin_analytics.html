@@ -1,0 +1,477 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+  <section class="mb-4">
+    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+      <div>
+        <h1 class="h2 mb-2">Usage Analytics</h1>
+        <p class="text-muted mb-0">
+          Comprehensive insights into resource usage, department activity, and booking trends.
+        </p>
+      </div>
+      <a class="btn btn-outline-secondary" href="{{ url_for('admin.dashboard') }}">Back to dashboard</a>
+    </div>
+  </section>
+
+  <!-- Summary Cards -->
+  <section class="mb-4">
+    <div class="row g-3">
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <span class="text-muted text-uppercase small">Total Bookings</span>
+            <p class="display-6 fw-semibold mb-0">{{ summary.total_bookings }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <span class="text-muted text-uppercase small">Active Users</span>
+            <p class="display-6 fw-semibold mb-0">{{ summary.total_users }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <span class="text-muted text-uppercase small">Published Resources</span>
+            <p class="display-6 fw-semibold mb-0">{{ summary.total_resources }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <span class="text-muted text-uppercase small">Last 30 Days</span>
+            <p class="display-6 fw-semibold mb-0">{{ summary.bookings_last_30_days }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Charts Row 1 -->
+  <section class="mb-4">
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <h2 class="h5 mb-3">Bookings by Department</h2>
+            <div style="position: relative; height: 300px;">
+              <canvas id="deptChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <h2 class="h5 mb-3">Bookings by Resource Category</h2>
+            <div style="position: relative; height: 300px;">
+              <canvas id="categoryChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Charts Row 2 -->
+  <section class="mb-4">
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <h2 class="h5 mb-3">Usage Trends (Last 30 Days)</h2>
+            <div style="position: relative; height: 300px;">
+              <canvas id="trendChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <h2 class="h5 mb-3">Booking Status Distribution</h2>
+            <div style="position: relative; height: 300px;">
+              <canvas id="statusChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tables Row -->
+  <section class="mb-4">
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <h2 class="h5 mb-3">Most Popular Resources</h2>
+            <div class="table-responsive">
+              <table class="table table-sm align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col">Resource</th>
+                    <th scope="col">Category</th>
+                    <th scope="col" class="text-end">Bookings</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for resource in popular_resources %}
+                    <tr>
+                      <td>
+                        <a href="{{ url_for('resources.detail', resource_id=resource.resource_id) }}" class="text-decoration-none">
+                          {{ resource.title }}
+                        </a>
+                      </td>
+                      <td>
+                        <span class="badge bg-primary-subtle text-primary">{{ resource.category }}</span>
+                      </td>
+                      <td class="text-end fw-semibold">{{ resource.booking_count }}</td>
+                    </tr>
+                  {% else %}
+                    <tr>
+                      <td colspan="3" class="text-center text-muted py-3">No resources with bookings yet.</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <h2 class="h5 mb-3">Department Activity</h2>
+            <div class="table-responsive">
+              <table class="table table-sm align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col">Department</th>
+                    <th scope="col" class="text-end">Users</th>
+                    <th scope="col" class="text-end">Bookings</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for dept in department_activity %}
+                    <tr>
+                      <td>{{ dept.department }}</td>
+                      <td class="text-end">{{ dept.user_count }}</td>
+                      <td class="text-end fw-semibold">{{ dept.booking_count }}</td>
+                    </tr>
+                  {% else %}
+                    <tr>
+                      <td colspan="3" class="text-center text-muted py-3">No department data available.</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <script>
+    // Chart.js configuration - optimized for performance
+    const chartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: {
+        duration: 750,
+        easing: 'easeInOutQuart'
+      },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            boxWidth: 12,
+            padding: 8,
+            font: {
+              size: 11
+            }
+          }
+        },
+        tooltip: {
+          enabled: true,
+          mode: 'index',
+          intersect: false
+        }
+      },
+      interaction: {
+        mode: 'nearest',
+        axis: 'x',
+        intersect: false
+      }
+    };
+
+    // Lazy load charts - only render when visible
+    const chartInstances = {};
+    
+    function renderChart(chartId, config) {
+      const canvas = document.getElementById(chartId);
+      if (!canvas || chartInstances[chartId]) return;
+      
+      const ctx = canvas.getContext('2d');
+      chartInstances[chartId] = new Chart(ctx, config);
+    }
+
+    // Intersection Observer for lazy loading
+    const observerOptions = {
+      root: null,
+      rootMargin: '50px',
+      threshold: 0.1
+    };
+
+    const chartObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const chartId = entry.target.id;
+          // Trigger rendering based on chart ID
+          if (chartId === 'deptChart' && !chartInstances[chartId]) {
+            initDeptChart();
+          } else if (chartId === 'categoryChart' && !chartInstances[chartId]) {
+            initCategoryChart();
+          } else if (chartId === 'trendChart' && !chartInstances[chartId]) {
+            initTrendChart();
+          } else if (chartId === 'statusChart' && !chartInstances[chartId]) {
+            initStatusChart();
+          }
+        }
+      });
+    }, observerOptions);
+
+    // Observe all chart canvases
+    ['deptChart', 'categoryChart', 'trendChart', 'statusChart'].forEach(id => {
+      const canvas = document.getElementById(id);
+      if (canvas) chartObserver.observe(canvas);
+    });
+
+    // Bookings by Department Chart
+    function initDeptChart() {
+      const deptCtx = document.getElementById('deptChart');
+      if (!deptCtx || chartInstances['deptChart']) return;
+      
+      try {
+        const deptData = {{ dept_data_json|safe }};
+        const deptLabels = deptData.labels || [];
+        const deptValues = deptData.values || [];
+        if (deptLabels && deptLabels.length > 0) {
+          renderChart('deptChart', {
+            type: 'bar',
+            data: {
+              labels: deptLabels,
+              datasets: [{
+                label: 'Bookings',
+                data: deptValues,
+                backgroundColor: 'rgba(13, 110, 253, 0.7)',
+                borderColor: 'rgba(13, 110, 253, 1)',
+                borderWidth: 1
+              }]
+            },
+            options: {
+              ...chartOptions,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    stepSize: 1,
+                    maxTicksLimit: 10
+                  }
+                },
+                x: {
+                  ticks: {
+                    maxRotation: 45,
+                    minRotation: 0
+                  }
+                }
+              }
+            }
+          });
+        } else {
+          deptCtx.parentElement.innerHTML = '<p class="text-muted text-center py-4">No department data available.</p>';
+        }
+      } catch (e) {
+        console.error('Error rendering department chart:', e);
+        deptCtx.parentElement.innerHTML = '<p class="text-muted text-center py-4">Error loading chart data.</p>';
+      }
+    }
+    
+    // Bookings by Category Chart
+    function initCategoryChart() {
+      const categoryCtx = document.getElementById('categoryChart');
+      if (!categoryCtx || chartInstances['categoryChart']) return;
+      
+      try {
+        const catData = {{ category_data_json|safe }};
+        const catLabels = catData.labels || [];
+        const catValues = catData.values || [];
+        if (catLabels && catLabels.length > 0) {
+          renderChart('categoryChart', {
+            type: 'bar',
+            data: {
+              labels: catLabels,
+              datasets: [{
+                label: 'Bookings',
+                data: catValues,
+                backgroundColor: [
+                  'rgba(13, 110, 253, 0.7)',
+                  'rgba(25, 135, 84, 0.7)',
+                  'rgba(255, 193, 7, 0.7)',
+                  'rgba(220, 53, 69, 0.7)',
+                  'rgba(108, 117, 125, 0.7)'
+                ],
+                borderColor: [
+                  'rgba(13, 110, 253, 1)',
+                  'rgba(25, 135, 84, 1)',
+                  'rgba(255, 193, 7, 1)',
+                  'rgba(220, 53, 69, 1)',
+                  'rgba(108, 117, 125, 1)'
+                ],
+                borderWidth: 1
+              }]
+            },
+            options: {
+              ...chartOptions,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    stepSize: 1,
+                    maxTicksLimit: 10
+                  }
+                }
+              }
+            }
+          });
+        } else {
+          categoryCtx.parentElement.innerHTML = '<p class="text-muted text-center py-4">No category data available.</p>';
+        }
+      } catch (e) {
+        console.error('Error rendering category chart:', e);
+        categoryCtx.parentElement.innerHTML = '<p class="text-muted text-center py-4">Error loading chart data.</p>';
+      }
+    }
+    
+    // Initialize first chart immediately (above fold), rest lazy load
+    initDeptChart();
+    // Small delay for second chart to avoid blocking
+    setTimeout(() => initCategoryChart(), 100);
+
+    // Usage Trends Chart
+    function initTrendChart() {
+      const trendCtx = document.getElementById('trendChart');
+      if (!trendCtx || chartInstances['trendChart']) return;
+      
+      try {
+        const trendData = {{ trend_data_json|safe }};
+        let trendLabels = trendData.labels || [];
+        let trendValues = trendData.values || [];
+        
+        // Limit data points for performance (sample if too many)
+        if (trendLabels.length > 30) {
+          const step = Math.ceil(trendLabels.length / 30);
+          trendLabels = trendLabels.filter((_, i) => i % step === 0);
+          trendValues = trendValues.filter((_, i) => i % step === 0);
+        }
+        
+        if (trendLabels && trendLabels.length > 0) {
+          renderChart('trendChart', {
+            type: 'line',
+            data: {
+              labels: trendLabels,
+              datasets: [{
+                label: 'Bookings per Day',
+                data: trendValues,
+                borderColor: 'rgba(13, 110, 253, 1)',
+                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3,
+                pointRadius: 2,
+                pointHoverRadius: 4
+              }]
+            },
+            options: {
+              ...chartOptions,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    stepSize: 1,
+                    maxTicksLimit: 10
+                  }
+                },
+                x: {
+                  ticks: {
+                    maxTicksLimit: 15,
+                    maxRotation: 45,
+                    minRotation: 0
+                  }
+                }
+              }
+            }
+          });
+        } else {
+          trendCtx.parentElement.innerHTML = '<p class="text-muted text-center py-4">No trend data available for the last 30 days.</p>';
+        }
+      } catch (e) {
+        console.error('Error rendering trend chart:', e);
+        trendCtx.parentElement.innerHTML = '<p class="text-muted text-center py-4">Error loading chart data.</p>';
+      }
+    }
+
+    // Status Distribution Chart
+    function initStatusChart() {
+      const statusCtx = document.getElementById('statusChart');
+      if (!statusCtx || chartInstances['statusChart']) return;
+      
+      try {
+        const statusData = {{ status_data_json|safe }};
+        const statusLabels = statusData.labels || [];
+        const statusValues = statusData.values || [];
+        if (statusLabels && statusLabels.length > 0) {
+          renderChart('statusChart', {
+            type: 'doughnut',
+            data: {
+              labels: statusLabels,
+              datasets: [{
+                data: statusValues,
+                backgroundColor: [
+                  'rgba(255, 193, 7, 0.7)',
+                  'rgba(25, 135, 84, 0.7)',
+                  'rgba(220, 53, 69, 0.7)',
+                  'rgba(13, 110, 253, 0.7)',
+                  'rgba(108, 117, 125, 0.7)'
+                ],
+                borderColor: [
+                  'rgba(255, 193, 7, 1)',
+                  'rgba(25, 135, 84, 1)',
+                  'rgba(220, 53, 69, 1)',
+                  'rgba(13, 110, 253, 1)',
+                  'rgba(108, 117, 125, 1)'
+                ],
+                borderWidth: 2
+              }]
+            },
+            options: chartOptions
+          });
+        } else {
+          statusCtx.parentElement.innerHTML = '<p class="text-muted text-center py-4">No booking status data available.</p>';
+        }
+      } catch (e) {
+        console.error('Error rendering status chart:', e);
+        statusCtx.parentElement.innerHTML = '<p class="text-muted text-center py-4">Error loading chart data.</p>';
+      }
+    }
+  </script>
+{% endblock %}
+

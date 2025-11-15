@@ -1,0 +1,127 @@
+{% extends 'layouts/base.html' %}
+{% import 'partials/resource_macros.html' as resource_macros %}
+
+{% block content %}
+  <div class="d-flex flex-column gap-3 mb-4">
+    <div>
+      <h1 class="h3 mb-1">Resources</h1>
+      <p class="text-muted mb-0">Browse published campus resources and refine the list with filters.</p>
+    </div>
+    <form class="row g-3 align-items-end" method="get" action="{{ url_for('resources.list_resources') }}">
+      <div class="col-sm-6 col-md-3">
+        <label for="keyword" class="form-label">Keyword</label>
+        <input
+          id="keyword"
+          type="search"
+          class="form-control"
+          name="q"
+          placeholder="Search titles or descriptions"
+          value="{{ search_context.keyword if search_context else request.args.get('q', '') }}"
+        />
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <label for="category" class="form-label">Category</label>
+        <select id="category" class="form-select" name="category">
+          <option value="">All categories</option>
+          {% for category in category_filters or [] %}
+            <option value="{{ category }}" {% if search_context and search_context.category == category %}selected{% endif %}>
+              {{ category }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <label for="location" class="form-label">Location</label>
+        <input
+          id="location"
+          type="search"
+          class="form-control"
+          name="location"
+          placeholder="Building or area"
+          value="{{ search_context.location if search_context else request.args.get('location', '') }}"
+        />
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <label for="sort" class="form-label">Sort by</label>
+        <select id="sort" class="form-select" name="sort">
+          {% set active_sort = search_context.sort if search_context else request.args.get('sort', 'recent') %}
+          <option value="recent" {% if active_sort == 'recent' %}selected{% endif %}>Most recent</option>
+          <option value="top-rated" {% if active_sort == 'top-rated' %}selected{% endif %}>Top rated</option>
+        </select>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <label for="start-date" class="form-label">Available from</label>
+        <input
+          id="start-date"
+          type="date"
+          class="form-control"
+          name="start_date"
+          value="{{ search_context.start_date if search_context else request.args.get('start_date', '') }}"
+        />
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <label for="end-date" class="form-label">Available until</label>
+        <input
+          id="end-date"
+          type="date"
+          class="form-control"
+          name="end_date"
+          value="{{ search_context.end_date if search_context else request.args.get('end_date', '') }}"
+        />
+      </div>
+      <div class="col-auto d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Apply filters</button>
+        {% if has_active_filters %}
+          <a class="btn btn-outline-secondary" href="{{ url_for('resources.list_resources') }}">Reset</a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+
+  <div class="row g-4">
+    {% for resource in resources %}
+      <div class="col-md-6 col-xl-4">
+        <div class="card h-100 shadow-sm">
+          <img
+            src="{{ resource_macros.resource_image(resource) }}"
+            class="card-img-top img-fluid"
+            alt="{{ resource.title }}"
+          />
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex gap-2 mb-2">
+              <span class="badge bg-primary-subtle text-primary">{{ resource.category }}</span>
+              {% if resource.requires_approval %}
+                <span class="badge bg-warning-subtle text-warning-emphasis">Requires Approval</span>
+              {% endif %}
+            </div>
+            <h2 class="h5">{{ resource.title }}</h2>
+            <p class="text-muted flex-grow-1">{{ resource.description[:110] }}{% if resource.description|length > 110 %}…{% endif %}</p>
+            <p class="mb-2 text-muted">Capacity · {{ resource.capacity }}</p>
+            {% if resource.average_rating %}
+              <span class="badge bg-warning text-dark align-self-start mb-2">★ {{ resource.average_rating }}</span>
+            {% endif %}
+            <div class="d-flex gap-2 mt-auto">
+              <a class="btn btn-outline-primary flex-grow-1" href="{{ url_for('resources.detail', resource_id=resource.resource_id) }}">
+                View
+              </a>
+              {% if show_owner_actions %}
+                <a class="btn btn-outline-secondary" href="{{ url_for('resources.edit', resource_id=resource.resource_id) }}">
+                  Edit
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="col-12">
+        <div class="card border-dashed text-center py-5">
+          <p class="mb-0 text-muted">No resources match your filters yet.</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% include 'partials/pagination.html' %}
+{% endblock %}
+

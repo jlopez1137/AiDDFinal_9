@@ -1,0 +1,60 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-1">Pending approvals</h1>
+      <p class="text-muted mb-0">
+        {% if current_user.is_admin %}
+          Review booking requests across all resources.
+        {% else %}
+          Approve or reject requests for your resources.
+        {% endif %}
+      </p>
+    </div>
+    {% if current_user.is_admin %}
+      <a class="btn btn-outline-secondary" href="{{ url_for('admin.dashboard') }}">Back to dashboard</a>
+    {% endif %}
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="list-group list-group-flush">
+      {% for item in approvals %}
+        <div class="list-group-item">
+          <div class="d-flex justify-content-between align-items-start flex-column flex-md-row gap-3">
+            <div>
+              <h2 class="h5 mb-1">{{ item.resource.title }}</h2>
+              <p class="mb-2 text-muted">
+                Booking {{ item.booking.start_datetime.strftime('%b %d, %Y %I:%M %p') }} →
+                {{ item.booking.end_datetime.strftime('%I:%M %p') }}
+              </p>
+              <p class="mb-2 text-muted">Requester ID: {{ item.booking.requester_id }}</p>
+            </div>
+            <div class="w-100 w-md-50">
+              <form class="mb-2" method="post" action="{{ url_for('bookings.approve', booking_id=item.booking.booking_id) }}">
+                {{ csrf_token() }}
+                <div class="mb-2">
+                  <label for="approve-note-{{ item.booking.booking_id }}" class="form-label small text-muted">Approval notes (optional)</label>
+                  <textarea id="approve-note-{{ item.booking.booking_id }}" name="approval_notes" class="form-control form-control-sm" rows="2"></textarea>
+                </div>
+                <button class="btn btn-sm btn-success" type="submit">Approve</button>
+              </form>
+              <form method="post" action="{{ url_for('bookings.reject', booking_id=item.booking.booking_id) }}">
+                {{ csrf_token() }}
+                <div class="mb-2">
+                  <label for="reject-note-{{ item.booking.booking_id }}" class="form-label small text-muted">Rejection notes (optional)</label>
+                  <textarea id="reject-note-{{ item.booking.booking_id }}" name="approval_notes" class="form-control form-control-sm" rows="2"></textarea>
+                </div>
+                <button class="btn btn-sm btn-outline-danger" type="submit">Reject</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div class="list-group-item text-center text-muted py-4">No pending bookings at the moment.</div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
+
+

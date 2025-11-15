@@ -1,0 +1,69 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h1 class="h4 mb-1">Conversation</h1>
+              <p class="text-muted mb-0">
+                {% if context.resource %}
+                  Regarding: {{ context.resource.title }}
+                {% elif context.type == 'general' %}
+                  General discussion
+                {% else %}
+                  {{ context.type|title }} context
+                {% endif %}
+              </p>
+            </div>
+            <span class="badge bg-secondary-subtle text-secondary text-uppercase">{{ thread.context_type }}</span>
+          </div>
+          <div
+            id="message-thread"
+            class="message-thread mb-4"
+            data-thread-id="{{ thread.thread_id }}"
+            data-poll-url="{{ url_for('messaging.thread_since', thread_id=thread.thread_id) }}"
+            data-last-timestamp="{{ messages[-1].timestamp.isoformat() if messages }}"
+            data-current-user-id="{{ current_user.user_id }}"
+          >
+            {% for message in messages %}
+              <div
+                class="mb-3 {% if message.sender_id == current_user.user_id %}text-end{% endif %}"
+                data-message-id="{{ message.message_id }}"
+                data-timestamp="{{ message.timestamp.isoformat() }}"
+              >
+                <div class="d-flex justify-content-between {% if message.sender_id == current_user.user_id %}flex-row-reverse{% endif %}">
+                  <span class="fw-semibold">
+                    {% if message.sender_id == current_user.user_id %}You{% else %}Contact{% endif %}
+                  </span>
+                  <span class="text-muted small">{{ message.timestamp.strftime('%b %d, %Y %I:%M %p') }}</span>
+                </div>
+                <div class="mt-2 p-3 rounded {% if message.sender_id == current_user.user_id %}bg-primary text-white{% else %}bg-body-secondary{% endif %}">
+                  {{ message.content }}
+                </div>
+              </div>
+            {% else %}
+              <p class="text-muted">No messages yet.</p>
+            {% endfor %}
+          </div>
+          <form method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+              <label for="{{ form.content.id }}" class="form-label">Your message</label>
+              {{ form.content(class="form-control", rows="3", placeholder="Write a clear, professional update...") }}
+              {% for error in form.content.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+            <div class="d-grid">
+              {{ form.submit(class="btn btn-primary") }}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

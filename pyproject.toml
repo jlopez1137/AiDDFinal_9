@@ -1,0 +1,24 @@
+[project]
+name = "campus-resource-hub"
+version = "0.1.0"
+description = "Campus Resource Hub Flask application"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-q"
+testpaths = [
+    "tests",
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-select = ["B", "C4", "I"]
+

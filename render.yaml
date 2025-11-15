@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: campus-resource-hub
+    env: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn src.wsgi:app
+    envVars:
+      - key: FLASK_SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+

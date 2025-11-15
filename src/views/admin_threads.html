@@ -1,0 +1,50 @@
+{% extends 'layouts/base.html' %}
+{% import 'partials/resource_macros.html' as resource_macros %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-1">Admin inbox</h1>
+      <p class="text-muted mb-0">Monitor and respond to conversations across the platform.</p>
+    </div>
+    <a class="btn btn-outline-secondary" href="{{ url_for('admin.dashboard') }}">Back to dashboard</a>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="list-group list-group-flush">
+      {% for item in threads %}
+        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start gap-3" href="{{ url_for('admin.thread_detail', thread_id=item.thread.thread_id) }}">
+          <div class="me-auto">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <span class="badge bg-secondary-subtle text-secondary text-uppercase">{{ item.thread.context_type }}</span>
+              {% if item.context.resource %}
+                <span class="fw-semibold">{{ item.context.resource.title }}</span>
+              {% elif item.thread.context_type == 'general' %}
+                <span class="fw-semibold">General thread</span>
+              {% endif %}
+            </div>
+            <p class="mb-1 text-muted small">
+              {% if item.last_message %}
+                Last message at {{ item.last_message.timestamp.strftime('%b %d, %Y %I:%M %p') }}
+              {% else %}
+                No messages yet
+              {% endif %}
+            </p>
+            <p class="mb-0 text-truncate">
+              {% if item.last_message %}
+                {{ item.last_message.content }}
+              {% else %}
+                <span class="text-muted small">Thread created without messages.</span>
+              {% endif %}
+            </p>
+          </div>
+          <span class="badge bg-primary-subtle text-primary">{{ item.message_count }} messages</span>
+        </a>
+      {% else %}
+        <div class="list-group-item text-center text-muted py-4">No threads available yet.</div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
+
+

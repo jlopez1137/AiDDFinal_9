@@ -1,0 +1,59 @@
+<section class="mt-4" aria-label="Reviews">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 mb-0">Reviews</h2>
+    {% if resource.average_rating %}
+      <span class="badge bg-warning text-dark">★ {{ resource.average_rating }}</span>
+    {% endif %}
+  </div>
+
+  {% if user_can_review %}
+    <div class="card border-primary-subtle mb-4">
+      <div class="card-body">
+        <h3 class="h6">Share your experience</h3>
+        <form method="post" action="{{ url_for('reviews.submit', resource_id=resource.resource_id) }}" novalidate>
+          {{ review_form.hidden_tag() }}
+          <div class="row g-2">
+            <div class="col-sm-4">
+              <label for="{{ review_form.rating.id }}" class="form-label">Rating</label>
+              {{ review_form.rating(class="form-select") }}
+              {% for error in review_form.rating.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+            <div class="col-sm-8">
+              <label for="{{ review_form.comment.id }}" class="form-label">Comment</label>
+              {{ review_form.comment(class="form-control", rows="2") }}
+              {% for error in review_form.comment.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="d-grid d-sm-flex gap-2 mt-3">
+            {{ review_form.submit(class="btn btn-primary") }}
+          </div>
+        </form>
+      </div>
+    </div>
+  {% elif current_user.is_authenticated %}
+    <p class="text-muted">Complete a booking for this resource to leave a review.</p>
+  {% else %}
+    <p class="text-muted">
+      Please <a href="{{ url_for('auth.login') }}">sign in</a> after completing a booking to review this resource.
+    </p>
+  {% endif %}
+
+  <div class="list-group">
+    {% for review in reviews %}
+      <article class="list-group-item list-group-item-action">
+        <div class="d-flex justify-content-between">
+          <span class="fw-semibold">★ {{ review.rating }}</span>
+          <span class="text-muted small">{{ review.timestamp.strftime('%b %d, %Y') }}</span>
+        </div>
+        <p class="mb-0 mt-2">{{ review.comment }}</p>
+      </article>
+    {% else %}
+      <div class="list-group-item text-muted">No reviews yet.</div>
+    {% endfor %}
+  </div>
+</section>
+

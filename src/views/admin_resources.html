@@ -1,0 +1,77 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-1">Resources</h1>
+      <p class="text-muted mb-0">Moderate resource listings and status.</p>
+    </div>
+    <a class="btn btn-outline-secondary" href="{{ url_for('admin.dashboard') }}">Back to dashboard</a>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Owner</th>
+            <th scope="col">Category</th>
+            <th scope="col">Status</th>
+            <th scope="col">Approval</th>
+            <th scope="col">Created</th>
+            <th scope="col" class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for resource in resources %}
+            <tr>
+              <td>{{ resource.title }}</td>
+              <td>{{ resource.owner_name }}</td>
+              <td>{{ resource.category }}</td>
+              <td class="text-capitalize">{{ resource.status }}</td>
+              <td>
+                {% if resource.requires_approval %}
+                  <span class="badge bg-warning-subtle text-warning-emphasis">Required</span>
+                {% else %}
+                  <span class="badge bg-success-subtle text-success">Auto</span>
+                {% endif %}
+              </td>
+              <td>{{ resource.created_at }}</td>
+              <td class="text-end">
+                <div class="d-flex gap-2 justify-content-end">
+                  {% if resource.status == 'draft' %}
+                    <form
+                      method="post"
+                      action="{{ url_for('admin.publish_resource', resource_id=resource.resource_id) }}"
+                      class="d-inline"
+                    >
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                      <button type="submit" class="btn btn-sm btn-success">Publish</button>
+                    </form>
+                  {% elif resource.status == 'published' %}
+                    <form
+                      method="post"
+                      action="{{ url_for('admin.archive_resource', resource_id=resource.resource_id) }}"
+                      class="d-inline"
+                    >
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                      <button type="submit" class="btn btn-sm btn-outline-danger">Archive</button>
+                    </form>
+                  {% else %}
+                    <span class="text-muted small">Archived</span>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="7" class="text-center text-muted py-4">No resources found.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+

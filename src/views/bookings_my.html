@@ -1,0 +1,73 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-1">My bookings</h1>
+      <p class="text-muted mb-0">Track the status of your reservation requests.</p>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">Resource</th>
+            <th scope="col">Start</th>
+            <th scope="col">End</th>
+            <th scope="col">Status</th>
+            <th scope="col">Notes</th>
+            <th scope="col" class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for booking in bookings %}
+            <tr>
+              <td>
+                <a href="{{ url_for('resources.detail', resource_id=booking.resource_id) }}">
+                  View resource
+                </a>
+              </td>
+              <td>{{ booking.start_datetime.strftime('%b %d, %Y %I:%M %p') }}</td>
+              <td>{{ booking.end_datetime.strftime('%b %d, %Y %I:%M %p') }}</td>
+              <td class="text-capitalize">
+                <span class="badge
+                  {% if booking.status == 'pending' %}bg-warning-subtle text-warning-emphasis
+                  {% elif booking.status == 'approved' %}bg-success-subtle text-success
+                  {% elif booking.status == 'rejected' %}bg-danger-subtle text-danger
+                  {% elif booking.status == 'completed' %}bg-secondary-subtle text-secondary
+                  {% else %}bg-secondary-subtle text-secondary{% endif %}
+                ">{{ booking.status }}</span>
+              </td>
+              <td>
+                {% if booking.approval_notes %}
+                  <span class="text-muted small">{{ booking.approval_notes }}</span>
+                {% else %}
+                  <span class="text-muted small">—</span>
+                {% endif %}
+              </td>
+              <td class="text-end">
+                {% if booking.status in ['pending', 'approved'] %}
+                  <form method="post" action="{{ url_for('bookings.cancel', booking_id=booking.booking_id) }}" class="d-inline">
+                    {{ csrf_token() }}
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+                  </form>
+                {% else %}
+                  <span class="text-muted small">No actions</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">
+                You have not placed any bookings yet.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+

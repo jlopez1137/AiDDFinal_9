@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Wellness placeholder</title>
+  <desc id="desc">Abstract calming illustration for wellness resources.</desc>
+  <rect width="640" height="360" rx="24" fill="#fff7f4" />
+  <path d="M112 260c32-72 96-120 208-120s176 48 208 120" fill="none" stroke="#f3a89d" stroke-width="6" stroke-linecap="round" />
+  <path d="M230 228c18-40 54-66 90-66s72 26 90 66" fill="none" stroke="#f6c3bb" stroke-width="6" stroke-linecap="round" />
+  <circle cx="320" cy="132" r="32" fill="#f6c3bb" opacity="0.6" />
+  <circle cx="260" cy="96" r="18" fill="#f3a89d" opacity="0.4" />
+  <circle cx="388" cy="88" r="24" fill="#f6c3bb" opacity="0.4" />
+</svg>
+
